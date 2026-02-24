@@ -7,7 +7,7 @@ interface Validate{
 
 public class LambdaExpression {
     public static void main(String[] args){
-        Validate v1 = (str) -> str!=null && str.matches("^[A-Z][a-zA-Z]{2,}$");
+        Validate v1 = str -> str.matches("^[A-Z][a-zA-Z]{2,}\\s[A-Z][a-zA-Z]{2,}$");
 
         try(Scanner sc= new Scanner(System.in)){
             System.out.println("enter name");
