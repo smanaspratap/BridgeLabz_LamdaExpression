@@ -14,11 +14,13 @@ public class LambdaExpression {
 
         Validate v3 = str -> str.matches(".*[0-9].*");
 
+        Validate v4 = str ->str.matches("^[A-Za-z0-9]*[!@#$%^&*()\\-+][A-Za-z0-9]*$");
+
         try(Scanner sc= new Scanner(System.in)){
             System.out.println("enter your email");
             String str= sc.nextLine();
 
-            if(v1.validate(str) && v2.validate(str) && v3.validate(str)){
+            if(v1.validate(str) && v2.validate(str) && v3.validate(str) && v4.validate(str)){
                 System.out.println("correct");
             }else{
                 System.out.println("incorrect");
