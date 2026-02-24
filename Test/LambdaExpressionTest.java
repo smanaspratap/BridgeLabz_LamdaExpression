@@ -7,37 +7,35 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class LambdaExpressionTest {
 
-    // ---------- FIRST NAME ----------
+    // -------- UC1: First Name --------
     @Test
-    void givenFirstName_WhenValid_ShouldNotThrow() {
-        assertDoesNotThrow(() -> LambdaExpression.validateFirstName("Devraj"));
+    void givenFirstName_WhenValid_ShouldReturnTrue() {
+        assertTrue(LambdaExpression.FIRST_NAME.validate("Devraj"));
     }
 
     @Test
-    void givenFirstName_WhenInvalid_ShouldThrowCustomException() {
-        UserRegistrationException ex = assertThrows(
-                UserRegistrationException.class,
-                () -> LambdaExpression.validateFirstName("devraj")
-        );
-        assertEquals(UserRegistrationException.Type.INVALID_FIRST_NAME, ex.getType());
+    void givenFirstName_WhenInvalid_ShouldReturnFalse() {
+        assertFalse(LambdaExpression.FIRST_NAME.validate("devraj")); // no capital
+        assertFalse(LambdaExpression.FIRST_NAME.validate("De"));     // < 3
+        assertFalse(LambdaExpression.FIRST_NAME.validate("De1"));    // digit
+        assertFalse(LambdaExpression.FIRST_NAME.validate(null));     // null
     }
 
-    // ---------- LAST NAME ----------
+    // -------- UC2: Last Name --------
     @Test
-    void givenLastName_WhenValid_ShouldNotThrow() {
-        assertDoesNotThrow(() -> LambdaExpression.validateLastName("Goswami"));
+    void givenLastName_WhenValid_ShouldReturnTrue() {
+        assertTrue(LambdaExpression.LAST_NAME.validate("Goswami"));
     }
 
     @Test
-    void givenLastName_WhenInvalid_ShouldThrowCustomException() {
-        UserRegistrationException ex = assertThrows(
-                UserRegistrationException.class,
-                () -> LambdaExpression.validateLastName("go")
-        );
-        assertEquals(UserRegistrationException.Type.INVALID_LAST_NAME, ex.getType());
+    void givenLastName_WhenInvalid_ShouldReturnFalse() {
+        assertFalse(LambdaExpression.LAST_NAME.validate("goswami"));
+        assertFalse(LambdaExpression.LAST_NAME.validate("Go"));
+        assertFalse(LambdaExpression.LAST_NAME.validate("Go@"));
+        assertFalse(LambdaExpression.LAST_NAME.validate(null));
     }
 
-    // ---------- EMAIL (Parameterized) ----------
+    // -------- UC9: Email (Parameterized) --------
     @ParameterizedTest
     @ValueSource(strings = {
             "abc@yahoo.com",
@@ -50,8 +48,8 @@ class LambdaExpressionTest {
             "abc@gmail.com.com",
             "abc+100@gmail.com"
     })
-    void givenEmail_WhenValid_ShouldNotThrow(String email) {
-        assertDoesNotThrow(() -> LambdaExpression.validateEmail(email));
+    void givenEmail_WhenValid_ShouldReturnTrue(String email) {
+        assertTrue(LambdaExpression.EMAIL.validate(email));
     }
 
     @ParameterizedTest
@@ -70,41 +68,60 @@ class LambdaExpressionTest {
             "abc@gmail.com.1a",
             "abc@gmail.com.aa.au"
     })
-    void givenEmail_WhenInvalid_ShouldThrowCustomException(String email) {
-        UserRegistrationException ex = assertThrows(
-                UserRegistrationException.class,
-                () -> LambdaExpression.validateEmail(email)
-        );
-        assertEquals(UserRegistrationException.Type.INVALID_EMAIL, ex.getType());
+    void givenEmail_WhenInvalid_ShouldReturnFalse(String email) {
+        assertFalse(LambdaExpression.EMAIL.validate(email));
     }
 
-    // ---------- MOBILE ----------
+    // -------- UC4: Mobile --------
     @Test
-    void givenMobile_WhenValid_ShouldNotThrow() {
-        assertDoesNotThrow(() -> LambdaExpression.validateMobile("91 9919819801"));
+    void givenMobile_WhenValid_ShouldReturnTrue() {
+        assertTrue(LambdaExpression.MOBILE.validate("91 9919819801"));
     }
 
     @Test
-    void givenMobile_WhenInvalid_ShouldThrowCustomException() {
-        UserRegistrationException ex = assertThrows(
-                UserRegistrationException.class,
-                () -> LambdaExpression.validateMobile("919919819801")
-        );
-        assertEquals(UserRegistrationException.Type.INVALID_MOBILE, ex.getType());
+    void givenMobile_WhenInvalid_ShouldReturnFalse() {
+        assertFalse(LambdaExpression.MOBILE.validate("919919819801")); // no space
+        assertFalse(LambdaExpression.MOBILE.validate("91 1234567890")); // starts not 6-9
+        assertFalse(LambdaExpression.MOBILE.validate("91 99198"));      // too short
+        assertFalse(LambdaExpression.MOBILE.validate(null));
     }
 
-    // ---------- PASSWORD ----------
+    // -------- UC5–UC8: Password (All rules) --------
     @Test
-    void givenPassword_WhenValid_ShouldNotThrow() {
-        assertDoesNotThrow(() -> LambdaExpression.validatePassword("Abcdefg1@"));
+    void givenPassword_WhenValid_ShouldReturnTrue() {
+        assertTrue(LambdaExpression.PASSWORD.validate("Abcdefg1@"));
     }
 
     @Test
-    void givenPassword_WhenInvalid_ShouldThrowCustomException() {
-        UserRegistrationException ex = assertThrows(
-                UserRegistrationException.class,
-                () -> LambdaExpression.validatePassword("abcdefg1@") // no uppercase
-        );
-        assertEquals(UserRegistrationException.Type.INVALID_PASSWORD, ex.getType());
+    void givenPassword_WhenInvalid_ShouldReturnFalse() {
+        assertFalse(LambdaExpression.PASSWORD.validate("Abc1@de"));     // <8
+        assertFalse(LambdaExpression.PASSWORD.validate("abcdefg1@"));   // no uppercase
+        assertFalse(LambdaExpression.PASSWORD.validate("Abcdefgh@"));   // no digit
+        assertFalse(LambdaExpression.PASSWORD.validate("Abcdefg1"));    // no special
+        assertFalse(LambdaExpression.PASSWORD.validate("Abcdefg1@@"));  // 2 specials
+        assertFalse(LambdaExpression.PASSWORD.validate(null));
+    }
+
+    // -------- Optional: Validate All Fields Together --------
+    @Test
+    void givenAllFields_WhenValid_ShouldReturnTrue() {
+        assertTrue(LambdaExpression.validateAll(
+                "Devraj",
+                "Goswami",
+                "abc@yahoo.com",
+                "91 9919819801",
+                "Abcdefg1@"
+        ));
+    }
+
+    @Test
+    void givenAllFields_WhenAnyInvalid_ShouldReturnFalse() {
+        assertFalse(LambdaExpression.validateAll(
+                "devraj", // invalid first name
+                "Goswami",
+                "abc@yahoo.com",
+                "91 9919819801",
+                "Abcdefg1@"
+        ));
     }
 }
