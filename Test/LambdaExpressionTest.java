@@ -1,3 +1,5 @@
+
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -5,7 +7,37 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class LambdaExpressionTest {
 
-    // ----------- VALID EMAILS (should PASS) -----------
+    // ---------- FIRST NAME ----------
+    @Test
+    void givenFirstName_WhenValid_ShouldNotThrow() {
+        assertDoesNotThrow(() -> LambdaExpression.validateFirstName("Devraj"));
+    }
+
+    @Test
+    void givenFirstName_WhenInvalid_ShouldThrowCustomException() {
+        UserRegistrationException ex = assertThrows(
+                UserRegistrationException.class,
+                () -> LambdaExpression.validateFirstName("devraj")
+        );
+        assertEquals(UserRegistrationException.Type.INVALID_FIRST_NAME, ex.getType());
+    }
+
+    // ---------- LAST NAME ----------
+    @Test
+    void givenLastName_WhenValid_ShouldNotThrow() {
+        assertDoesNotThrow(() -> LambdaExpression.validateLastName("Goswami"));
+    }
+
+    @Test
+    void givenLastName_WhenInvalid_ShouldThrowCustomException() {
+        UserRegistrationException ex = assertThrows(
+                UserRegistrationException.class,
+                () -> LambdaExpression.validateLastName("go")
+        );
+        assertEquals(UserRegistrationException.Type.INVALID_LAST_NAME, ex.getType());
+    }
+
+    // ---------- EMAIL (Parameterized) ----------
     @ParameterizedTest
     @ValueSource(strings = {
             "abc@yahoo.com",
@@ -18,11 +50,10 @@ class LambdaExpressionTest {
             "abc@gmail.com.com",
             "abc+100@gmail.com"
     })
-    void givenEmail_WhenValid_ShouldReturnTrue(String email) {
-        assertTrue(LambdaExpression.EMAIL.validate(email));
+    void givenEmail_WhenValid_ShouldNotThrow(String email) {
+        assertDoesNotThrow(() -> LambdaExpression.validateEmail(email));
     }
 
-    // ----------- INVALID EMAILS (should FAIL) -----------
     @ParameterizedTest
     @ValueSource(strings = {
             "abc",
@@ -39,7 +70,41 @@ class LambdaExpressionTest {
             "abc@gmail.com.1a",
             "abc@gmail.com.aa.au"
     })
-    void givenEmail_WhenInvalid_ShouldReturnFalse(String email) {
-        assertFalse(LambdaExpression.EMAIL.validate(email));
+    void givenEmail_WhenInvalid_ShouldThrowCustomException(String email) {
+        UserRegistrationException ex = assertThrows(
+                UserRegistrationException.class,
+                () -> LambdaExpression.validateEmail(email)
+        );
+        assertEquals(UserRegistrationException.Type.INVALID_EMAIL, ex.getType());
+    }
+
+    // ---------- MOBILE ----------
+    @Test
+    void givenMobile_WhenValid_ShouldNotThrow() {
+        assertDoesNotThrow(() -> LambdaExpression.validateMobile("91 9919819801"));
+    }
+
+    @Test
+    void givenMobile_WhenInvalid_ShouldThrowCustomException() {
+        UserRegistrationException ex = assertThrows(
+                UserRegistrationException.class,
+                () -> LambdaExpression.validateMobile("919919819801")
+        );
+        assertEquals(UserRegistrationException.Type.INVALID_MOBILE, ex.getType());
+    }
+
+    // ---------- PASSWORD ----------
+    @Test
+    void givenPassword_WhenValid_ShouldNotThrow() {
+        assertDoesNotThrow(() -> LambdaExpression.validatePassword("Abcdefg1@"));
+    }
+
+    @Test
+    void givenPassword_WhenInvalid_ShouldThrowCustomException() {
+        UserRegistrationException ex = assertThrows(
+                UserRegistrationException.class,
+                () -> LambdaExpression.validatePassword("abcdefg1@") // no uppercase
+        );
+        assertEquals(UserRegistrationException.Type.INVALID_PASSWORD, ex.getType());
     }
 }
