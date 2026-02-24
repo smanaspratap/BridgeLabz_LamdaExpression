@@ -12,11 +12,13 @@ public class LambdaExpression {
 
         Validate v2 = str ->str.matches(".*[A-Z].*");
 
+        Validate v3 = str -> str.matches(".*[0-9].*");
+
         try(Scanner sc= new Scanner(System.in)){
             System.out.println("enter your email");
             String str= sc.nextLine();
 
-            if(v1.validate(str) && v2.validate(str)){
+            if(v1.validate(str) && v2.validate(str) && v3.validate(str)){
                 System.out.println("correct");
             }else{
                 System.out.println("incorrect");
