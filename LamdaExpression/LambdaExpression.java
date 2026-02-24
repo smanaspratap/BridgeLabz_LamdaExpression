@@ -7,25 +7,33 @@ interface Validate{
 
 public class LambdaExpression {
     public static void main(String[] args){
-        Validate v1 = str ->
-                str != null && str.length() >= 8;
+        Validate v1 = str -> str.matches("^[A-Za-z0-9]+([._+-][A-Za-z0-9]+)*@[A-Za-z0-9]+(-[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}){1,2}$");
 
-        Validate v2 = str ->str.matches(".*[A-Z].*");
+        // A) VALID emails
+        System.out.println(v1.validate("abc@yahoo.com"));          // true
+        System.out.println(v1.validate("abc-100@yahoo.com"));      // true
+        System.out.println(v1.validate("abc.100@yahoo.com"));      // true
+        System.out.println(v1.validate("abc111@abc.com"));         // true
+        System.out.println(v1.validate("abc-100@abc.net"));        // true
+        System.out.println(v1.validate("abc.100@abc.com.au"));     // true
+        System.out.println(v1.validate("abc@1.com"));              // true
+        System.out.println(v1.validate("abc@gmail.com.com"));      // true
+        System.out.println(v1.validate("abc+100@gmail.com"));      // true
 
-        Validate v3 = str -> str.matches(".*[0-9].*");
-
-        Validate v4 = str ->str.matches("^[A-Za-z0-9]*[!@#$%^&*()\\-+][A-Za-z0-9]*$");
-
-        try(Scanner sc= new Scanner(System.in)){
-            System.out.println("enter your email");
-            String str= sc.nextLine();
-
-            if(v1.validate(str) && v2.validate(str) && v3.validate(str) && v4.validate(str)){
-                System.out.println("correct");
-            }else{
-                System.out.println("incorrect");
-            }
-        }
-
+        // B) INVALID emails
+        System.out.println(v1.validate("abc"));                    // false
+        System.out.println(v1.validate("abc@.com.my"));            // false
+        System.out.println(v1.validate("abc123@gmail.a"));         // false
+        System.out.println(v1.validate("abc123@.com"));            // false
+        System.out.println(v1.validate("abc123@.com.com"));        // false
+        System.out.println(v1.validate(".abc@abc.com"));           // false
+        System.out.println(v1.validate("abc()*@gmail.com"));       // false
+        System.out.println(v1.validate("abc@%*.com"));             // false
+        System.out.println(v1.validate("abc..2002@gmail.com"));    // false
+        System.out.println(v1.validate("abc.@gmail.com"));         // false
+        System.out.println(v1.validate("abc@abc@gmail.com"));      // false
+        System.out.println(v1.validate("abc@gmail.com.1a"));       // false
+        System.out.println(v1.validate("abc@gmail.com.aa.au"));    // fals
     }
+
 }
