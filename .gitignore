@@ -1,0 +1,20 @@
+# IntelliJ IDEA folder
+.idea/
+
+# IntelliJ module files
+*.iml
+
+# Compiled class files
+*.class
+
+# Log files
+*.log
+
+# Build folders
+out/
+target/
+build/
+
+# OS generated files
+.DS_Store
+Thumbs.db
